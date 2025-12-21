@@ -1,14 +1,46 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState, useEffect } from 'react';
+import { User } from '@/types/business';
+import { storageService } from '@/lib/storage';
+import LoginScreen from '@/components/LoginScreen';
+import Dashboard from '@/components/Dashboard';
+import ThemeSwitcher from '@/components/ThemeSwitcher';
 
-const Index = () => {
+export default function Index() {
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const savedUser = storageService.getCurrentUser();
+    if (savedUser) {
+      if (storageService.checkUserBlocked(savedUser)) {
+        storageService.setCurrentUser(null);
+        setCurrentUser(null);
+      } else {
+        setCurrentUser(savedUser);
+      }
+    }
+
+    const savedTheme = storageService.getTheme();
+    document.documentElement.classList.add(savedTheme);
+  }, []);
+
+  const handleLogin = (user: User) => {
+    storageService.setCurrentUser(user);
+    setCurrentUser(user);
+  };
+
+  const handleLogout = () => {
+    storageService.setCurrentUser(null);
+    setCurrentUser(null);
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4 color-black text-black">Добро пожаловать!</h1>
-        <p className="text-xl text-gray-600">тут будет отображаться ваш проект</p>
-      </div>
-    </div>
+    <>
+      <ThemeSwitcher />
+      {currentUser ? (
+        <Dashboard user={currentUser} onLogout={handleLogout} />
+      ) : (
+        <LoginScreen onLogin={handleLogin} />
+      )}
+    </>
   );
-};
-
-export default Index;
+}
