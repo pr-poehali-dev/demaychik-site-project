@@ -7,6 +7,7 @@ const STORAGE_KEYS = {
   QUESTIONS: 'demaynchik_questions',
   CURRENT_USER: 'demaynchik_current_user',
   THEME: 'demaynchik_theme',
+  IP_REGISTRY: 'demaynchik_ip_registry',
 };
 
 const ADMIN_ACCOUNT = {
@@ -95,5 +96,38 @@ export const storageService = {
   calculateTrialEnd(): Date {
     const now = new Date();
     return new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
+  },
+
+  getIPRegistry(): Record<string, string> {
+    const data = localStorage.getItem(STORAGE_KEYS.IP_REGISTRY);
+    return data ? JSON.parse(data) : {};
+  },
+
+  setIPRegistry(registry: Record<string, string>) {
+    localStorage.setItem(STORAGE_KEYS.IP_REGISTRY, JSON.stringify(registry));
+  },
+
+  async getCurrentIP(): Promise<string> {
+    try {
+      const response = await fetch('https://api.ipify.org?format=json');
+      const data = await response.json();
+      return data.ip || 'unknown';
+    } catch {
+      return 'unknown';
+    }
+  },
+
+  checkIPLimit(ip: string, userId: string): boolean {
+    if (userId === ADMIN_ACCOUNT.id) return true;
+    const registry = this.getIPRegistry();
+    const existingUserId = registry[ip];
+    return !existingUserId || existingUserId === userId;
+  },
+
+  registerIP(ip: string, userId: string) {
+    if (userId === ADMIN_ACCOUNT.id) return;
+    const registry = this.getIPRegistry();
+    registry[ip] = userId;
+    this.setIPRegistry(registry);
   },
 };

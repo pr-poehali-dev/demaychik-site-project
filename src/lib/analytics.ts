@@ -11,14 +11,14 @@ export const analyticsService = {
       .reduce((sum, t) => sum + t.amount, 0);
 
     const profit = totalIncome - totalExpenses;
-    const profitMargin = totalExpenses > 0 ? ((profit / totalExpenses) * 100) : 0;
+    const profitMargin = totalIncome > 0 ? ((profit / totalIncome) * 100) : 0;
 
     let status: BusinessStats['status'] = 'loss';
-    if (profitMargin < 20) status = 'loss';
-    else if (profitMargin >= 20 && profitMargin < 35) status = 'stable';
-    else if (profitMargin >= 35 && profitMargin < 60) status = 'successful';
-    else if (profitMargin >= 60 && profitMargin < 100) status = 'ideal';
-    else if (profitMargin >= 100) status = 'excellent';
+    if (profit < 0) status = 'loss';
+    else if (profitMargin >= 0 && profitMargin < 20) status = 'stable';
+    else if (profitMargin >= 20 && profitMargin < 40) status = 'successful';
+    else if (profitMargin >= 40 && profitMargin < 60) status = 'ideal';
+    else if (profitMargin >= 60) status = 'excellent';
 
     const daysActive = this.getDaysActive(business);
     const dailyAverage = daysActive > 0 ? profit / daysActive : 0;

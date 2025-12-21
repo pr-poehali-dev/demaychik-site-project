@@ -12,6 +12,7 @@ import Icon from '@/components/ui/icon';
 import { storageService } from '@/lib/storage';
 import { analyticsService } from '@/lib/analytics';
 import { useToast } from '@/hooks/use-toast';
+import BusinessChart from './BusinessChart';
 
 interface BusinessDetailsProps {
   business: Business;
@@ -154,17 +155,41 @@ export default function BusinessDetails({ business, onBack, onUpdate }: Business
         </Card>
       </div>
 
-      <Card className="animate-fade-in">
-        <CardHeader>
-          <CardTitle>Рекомендация ИИ</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex gap-3">
-            <Icon name="Sparkles" size={24} className="text-primary flex-shrink-0" />
-            <p className="text-muted-foreground">{statusInfo.advice}</p>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="grid gap-6 md:grid-cols-2">
+        <Card className="animate-fade-in">
+          <CardHeader>
+            <CardTitle>Рекомендация ИИ</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex gap-3">
+              <Icon name="Sparkles" size={24} className="text-primary flex-shrink-0" />
+              <p className="text-muted-foreground">{statusInfo.advice}</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="animate-fade-in">
+          <CardHeader>
+            <CardTitle>Средние показатели</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div>
+              <p className="text-sm text-muted-foreground">Среднее за день</p>
+              <p className="text-xl font-bold">{analyticsService.formatCurrency(stats.dailyAverage)}</p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Среднее за месяц</p>
+              <p className="text-xl font-bold">{analyticsService.formatCurrency(stats.monthlyAverage)}</p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Прогноз на год</p>
+              <p className="text-xl font-bold text-primary">{analyticsService.formatCurrency(stats.yearlyProjection)}</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <BusinessChart business={business} />
 
       <Tabs defaultValue="transactions" className="animate-fade-in">
         <TabsList className="grid w-full grid-cols-2">

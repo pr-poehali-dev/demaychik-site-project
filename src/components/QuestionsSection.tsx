@@ -6,6 +6,8 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
 import Icon from '@/components/ui/icon';
 import { storageService } from '@/lib/storage';
 import { useToast } from '@/hooks/use-toast';
@@ -102,28 +104,38 @@ export default function QuestionsSection({ user }: QuestionsSectionProps) {
           <h1 className="text-2xl font-bold">Вопрос</h1>
         </div>
 
-        <Card>
+        <Card className="border-2 shadow-lg animate-scale-in">
           <CardHeader>
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white font-bold">
-                {selectedQuestion.username[0].toUpperCase()}
-              </div>
+              <Avatar className="w-12 h-12 border-2 border-primary/20 ring-2 ring-offset-2 ring-primary/30">
+                <AvatarImage src={selectedQuestion.userAvatar} alt={selectedQuestion.username} />
+                <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-white font-bold">
+                  {selectedQuestion.username[0].toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
               <div className="flex-1">
                 <div className="flex items-center gap-2">
-                  <span className="font-semibold">{selectedQuestion.username}</span>
+                  <span className="font-bold text-lg">{selectedQuestion.username}</span>
                   {selectedQuestion.isPremium && (
-                    <Icon name="Crown" size={14} className="text-yellow-500" />
+                    <Badge className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white animate-pulse">
+                      <Icon name="Crown" size={12} className="mr-1" />
+                      Premium
+                    </Badge>
                   )}
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  {new Date(selectedQuestion.createdAt).toLocaleDateString('ru-RU')}
+                <p className="text-sm text-muted-foreground">
+                  {new Date(selectedQuestion.createdAt).toLocaleDateString('ru-RU', { 
+                    day: 'numeric', 
+                    month: 'long', 
+                    year: 'numeric' 
+                  })}
                 </p>
               </div>
             </div>
-            <CardTitle>{selectedQuestion.title}</CardTitle>
+            <CardTitle className="text-2xl">{selectedQuestion.title}</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-muted-foreground whitespace-pre-wrap">{selectedQuestion.content}</p>
+            <p className="text-base leading-relaxed whitespace-pre-wrap">{selectedQuestion.content}</p>
           </CardContent>
         </Card>
 
@@ -148,24 +160,30 @@ export default function QuestionsSection({ user }: QuestionsSectionProps) {
               </CardContent>
             </Card>
 
-            {selectedQuestion.answers.map((answer) => (
-              <Card key={answer.id}>
+            {selectedQuestion.answers.map((answer, index) => (
+              <Card key={answer.id} className="animate-slide-up hover:shadow-lg transition-shadow" style={{ animationDelay: `${index * 0.1}s` }}>
                 <CardContent className="pt-6">
-                  <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white font-bold flex-shrink-0">
-                      {answer.username[0].toUpperCase()}
-                    </div>
+                  <div className="flex items-start gap-4">
+                    <Avatar className="w-12 h-12 border-2 border-muted">
+                      <AvatarImage src={answer.userAvatar} alt={answer.username} />
+                      <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-white font-bold">
+                        {answer.username[0].toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
-                        <span className="font-semibold">{answer.username}</span>
+                        <span className="font-bold">{answer.username}</span>
                         {answer.isPremium && (
-                          <Icon name="Crown" size={14} className="text-yellow-500" />
+                          <Badge variant="secondary" className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white text-xs">
+                            <Icon name="Crown" size={10} className="mr-1" />
+                            Premium
+                          </Badge>
                         )}
-                        <span className="text-xs text-muted-foreground">
+                        <span className="text-sm text-muted-foreground">
                           • {new Date(answer.createdAt).toLocaleDateString('ru-RU')}
                         </span>
                       </div>
-                      <p className="text-muted-foreground whitespace-pre-wrap">{answer.content}</p>
+                      <p className="text-base leading-relaxed whitespace-pre-wrap">{answer.content}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -242,30 +260,41 @@ export default function QuestionsSection({ user }: QuestionsSectionProps) {
           {questions.map((question, index) => (
             <Card
               key={question.id}
-              className="cursor-pointer hover:shadow-lg transition-all animate-fade-in"
+              className="cursor-pointer hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 animate-scale-in border-2 group"
               style={{ animationDelay: `${index * 0.1}s` }}
               onClick={() => setSelectedQuestion(question)}
             >
               <CardHeader>
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white font-bold">
-                    {question.username[0].toUpperCase()}
-                  </div>
+                <div className="flex items-center gap-4 mb-3">
+                  <Avatar className="w-12 h-12 border-2 border-primary/20 group-hover:scale-110 transition-transform duration-300">
+                    <AvatarImage src={question.userAvatar} alt={question.username} />
+                    <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-white font-bold">
+                      {question.username[0].toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold">{question.username}</span>
+                      <span className="font-bold">{question.username}</span>
                       {question.isPremium && (
-                        <Icon name="Crown" size={14} className="text-yellow-500" />
+                        <Badge className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white">
+                          <Icon name="Crown" size={10} className="mr-1" />
+                          Premium
+                        </Badge>
                       )}
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                      {new Date(question.createdAt).toLocaleDateString('ru-RU')}
+                    <p className="text-sm text-muted-foreground">
+                      {new Date(question.createdAt).toLocaleDateString('ru-RU', { 
+                        day: 'numeric', 
+                        month: 'long' 
+                      })}
                     </p>
                   </div>
+                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:scale-110 transition-all duration-300">
+                    <Icon name="ChevronRight" size={20} className="text-primary group-hover:text-white" />
+                  </div>
                 </div>
-                <CardTitle className="flex items-center justify-between">
-                  <span>{question.title}</span>
-                  <Icon name="ChevronRight" size={20} className="text-muted-foreground" />
+                <CardTitle className="text-xl group-hover:text-primary transition-colors duration-300">
+                  {question.title}
                 </CardTitle>
               </CardHeader>
               <CardContent>

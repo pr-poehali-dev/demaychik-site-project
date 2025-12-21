@@ -11,6 +11,7 @@ import { storageService } from '@/lib/storage';
 import { analyticsService } from '@/lib/analytics';
 import { useToast } from '@/hooks/use-toast';
 import BusinessDetails from './BusinessDetails';
+import FeaturesShowcase from './FeaturesShowcase';
 
 interface BusinessListProps {
   user: User;
@@ -146,42 +147,68 @@ export default function BusinessList({ user }: BusinessListProps) {
             return (
               <Card
                 key={business.id}
-                className="cursor-pointer hover:shadow-lg transition-all hover:scale-105 animate-fade-in"
+                className="cursor-pointer hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 animate-scale-in hover-lift group relative overflow-hidden border-2"
                 style={{ animationDelay: `${index * 0.1}s` }}
                 onClick={() => setSelectedBusiness(business)}
               >
-                <CardHeader>
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                
+                <CardHeader className="relative z-10">
                   <CardTitle className="flex items-center justify-between">
-                    <span className="truncate">{business.name}</span>
-                    <Icon name="ChevronRight" size={20} className="text-muted-foreground" />
+                    <span className="truncate group-hover:text-primary transition-colors duration-300">{business.name}</span>
+                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:scale-110 transition-all duration-300">
+                      <Icon name="ChevronRight" size={20} className="text-primary group-hover:text-white transition-colors" />
+                    </div>
                   </CardTitle>
                   <CardDescription className="line-clamp-2">
                     {business.description || 'Нет описания'}
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="relative z-10">
                   <div className="space-y-3">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Прибыль:</span>
-                      <span className={`font-semibold ${stats.profit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg group-hover:bg-muted transition-colors duration-300">
+                      <div className="flex items-center gap-2">
+                        <Icon name="TrendingUp" size={16} className="text-muted-foreground" />
+                        <span className="text-sm text-muted-foreground">Прибыль:</span>
+                      </div>
+                      <span className={`font-bold text-lg ${stats.profit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                         {analyticsService.formatCurrency(stats.profit)}
                       </span>
                     </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Статус:</span>
-                      <span className={`font-semibold ${statusInfo.color}`}>
+                    <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg group-hover:bg-muted transition-colors duration-300">
+                      <div className="flex items-center gap-2">
+                        <Icon name="Activity" size={16} className="text-muted-foreground" />
+                        <span className="text-sm text-muted-foreground">Статус:</span>
+                      </div>
+                      <span className={`font-bold ${statusInfo.color} flex items-center gap-1`}>
                         {statusInfo.label}
                       </span>
                     </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Записей:</span>
-                      <span className="font-semibold">{business.records.length}</span>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="p-2 bg-blue-50 rounded-lg text-center">
+                        <p className="text-xs text-blue-600 font-medium">Записей</p>
+                        <p className="text-lg font-bold text-blue-900">{business.records.length}</p>
+                      </div>
+                      <div className="p-2 bg-purple-50 rounded-lg text-center">
+                        <p className="text-xs text-purple-600 font-medium">Транзакций</p>
+                        <p className="text-lg font-bold text-purple-900">{business.transactions.length}</p>
+                      </div>
                     </div>
                   </div>
                 </CardContent>
               </Card>
             );
           })}
+        </div>
+      )}
+
+      {businesses.length > 0 && (
+        <div className="mt-12 space-y-4 animate-fade-in">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold mb-2">Возможности DEMAYNCHIK</h2>
+            <p className="text-muted-foreground text-lg">Всё для эффективного управления вашим бизнесом</p>
+          </div>
+          <FeaturesShowcase />
         </div>
       )}
     </div>
