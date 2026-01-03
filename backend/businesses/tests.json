@@ -1,0 +1,36 @@
+{
+  "tests": [
+    {
+      "name": "Get user businesses",
+      "method": "GET",
+      "path": "/?path=businesses",
+      "headers": {
+        "X-User-Id": "1"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "businesses": "array"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Create business",
+      "method": "POST",
+      "path": "/?path=business",
+      "headers": {
+        "X-User-Id": "1"
+      },
+      "body": {
+        "name": "Test Business",
+        "description": "Test",
+        "is_online": false
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "success": true,
+        "business_id": "number"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}

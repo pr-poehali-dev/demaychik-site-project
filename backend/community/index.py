@@ -29,7 +29,8 @@ def handler(event: dict, context) -> dict:
         }
     
     headers = event.get('headers', {})
-    user_id = headers.get('x-user-id') or headers.get('X-User-Id')
+    user_id_str = headers.get('x-user-id') or headers.get('X-User-Id')
+    user_id = int(user_id_str) if user_id_str else None
     path = event.get('queryStringParameters', {}).get('path', '')
     
     try:
