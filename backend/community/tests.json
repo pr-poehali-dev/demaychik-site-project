@@ -1,0 +1,29 @@
+{
+  "tests": [
+    {
+      "name": "Get all questions",
+      "method": "GET",
+      "path": "/?path=questions",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "questions": []
+      }
+    },
+    {
+      "name": "Create user",
+      "method": "POST",
+      "path": "/?path=user",
+      "body": {
+        "username": "test_user",
+        "email": "test@example.com",
+        "avatar_url": "https://example.com/avatar.png",
+        "is_premium": false
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "success": true
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}
